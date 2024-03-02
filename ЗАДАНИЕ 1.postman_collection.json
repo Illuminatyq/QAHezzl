@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "04c783d3-61a1-441e-b3fb-8f6357ba4644",
+		"name": "ЗАДАНИЕ 1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21795629"
+	},
+	"item": [
+		{
+			"name": "КОЛЛЕКЦИЯ INIT",
+			"item": [
+				{
+					"name": "КОЛЛЕКЦИЯ INIT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Сервер отдал статус 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Записываем в переменную timeZone значение параметра time из ответа\r",
+									"pm.environment.set(\"timeZone\", pm.response.json().time);\r",
+									"\r",
+									"pm.test(\"data в ответе\", function () {\r",
+									"  pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверяем наличие параметра auth в data в ответе\", function () {\r",
+									"  pm.expect(pm.response.json().data.auth).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/gw/v1/game/{{campaignId}}/init",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"gw",
+								"v1",
+								"game",
+								"{{campaignId}}",
+								"init"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "КОЛЛЕКЦИЯ LOGIN",
+			"item": [
+				{
+					"name": "Метод CheckLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Сервер отдал статус 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверяем, что скорость ответа от сервера менее 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"//Записываем в переменную accessToken значение параметра accessToken из ответа\r",
+									"pm.environment.set(\"accessToken\", pm.response.json().accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\": \"{{email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/v1/game/{{campaignId}}/check-login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"v1",
+								"game",
+								"{{campaignId}}",
+								"check-login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Метод ConfirmCode",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"Authorization = \"{{accessToken}}\""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Сервер отдал статус 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверяем, что скорость ответа от сервера менее 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/v1/game/{{campaignId}}/confirm-code",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"v1",
+								"game",
+								"{{campaignId}}",
+								"confirm-code"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		}
+	]
+}
